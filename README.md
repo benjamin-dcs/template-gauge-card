@@ -4,8 +4,7 @@
 
 This card has the same look and feel as the default [Gauge card](https://www.home-assistant.io/dashboards/gauge/), but the majority of the fields can, independently, be provided with a (templatable) value. Additionally, it is possible to have a different `value` and `valueText`, to (for example) create your own version of the [Grid neutrality gauge](https://www.home-assistant.io/dashboards/energy/#grid-neutrality-gauge).
 
-![image](https://github.com/user-attachments/assets/669e4ae8-7f94-4389-bd3c-907287605d47)
-
+![image](https://github.com/user-attachments/assets/ccefe63d-6cdc-448f-97a8-98b32e926ff0)
 
 ## Configuration variables
 
