@@ -1,0 +1,20 @@
+{
+  "editor": {
+    "card": {
+      "entity": "Entity",
+      "value": "Value",
+      "valueText": "Value Text",
+      "min": "Min",
+      "max": "Max",
+      "needle": "Needle",
+      "severity": "Severity",
+      "show_severity": "Show severity",
+      "red": "Red",
+      "green": "Green",
+      "yellow": "Yellow"
+    }
+  },
+  "card": {
+    "not_found": "Entity not found"
+  }
+}
