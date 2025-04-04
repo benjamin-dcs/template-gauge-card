@@ -6,6 +6,7 @@ import {
   object,
   optional,
   string,
+  union,
 } from "superstruct";
 import { LovelaceCardConfig } from "../ha";
 import { lovelaceCardConfigStruct } from "../mushroom/shared/config/lovelace-card-config";
@@ -19,7 +20,6 @@ const gaugeSegmentStruct = object({
 
 export type TemplateCardConfig = LovelaceCardConfig & {
   entity?: string;
-  // entity_id?: string | string[];
   value: string;
   valueText?: string;
   name?: string;
@@ -29,13 +29,13 @@ export type TemplateCardConfig = LovelaceCardConfig & {
   tap_action?: ActionConfig;
   hold_action?: ActionConfig;
   double_tap_action?: ActionConfig;
+  entity_id?: string | string[];
 };
 
 export const templateCardConfigStruct = assign(
   lovelaceCardConfigStruct,
   object({
     entity: optional(string()),
-    // entity_id: optional(union([string(), array(string())])),
     value: optional(string()),
     valueText: optional(string()),
     name: optional(string()),
@@ -47,5 +47,6 @@ export const templateCardConfigStruct = assign(
     tap_action: optional(actionConfigStruct),
     hold_action: optional(actionConfigStruct),
     double_tap_action: optional(actionConfigStruct),
+    entity_id: optional(union([string(), array(string())])),
   })
 );
