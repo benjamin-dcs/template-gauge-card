@@ -46,7 +46,7 @@ export interface UIConfigChangedEvent extends Event {
   };
 }
 
-export abstract class MushroomElementEditor<T> extends LitElement {
+export abstract class TemplateGaugeElementEditor<T> extends LitElement {
   @property({ attribute: false }) public hass!: HomeAssistant;
 
   @property({ attribute: false }) public lovelace?: LovelaceConfig;

@@ -16,7 +16,6 @@ import {
 } from "../ha";
 import { TemplateGaugeBaseElement } from "../mushroom/utils/base-element";
 import { CacheManager } from "../mushroom/utils/cache-manager";
-import { registerCustomCard } from "../mushroom/utils/custom-cards";
 import { TEMPLATE_CARD_EDITOR_NAME, TEMPLATE_CARD_NAME } from "./const";
 import { TemplateCardConfig } from "./template-gauge-card-config";
 import "./template-gauge";
@@ -26,12 +25,6 @@ const templateCache = new CacheManager<TemplateResults>(1000);
 type TemplateResults = Partial<
   Record<TemplateKey, RenderTemplateResult | undefined>
 >;
-
-registerCustomCard({
-  type: TEMPLATE_CARD_NAME,
-  name: "Template Gauge Card",
-  description: "Home Assistant Gauge Card how you like it, using templates",
-});
 
 export const DEFAULT_MIN = 0;
 export const DEFAULT_MAX = 100;
