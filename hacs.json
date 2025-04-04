@@ -1,6 +1,6 @@
 {
   "name": "Template Gauge Card",
-  "filename": "template-gauge-gauge.js",
+  "filename": "template-gauge-card.js",
   "homeassistant": "2024.8",
   "render_readme": true
 }
