@@ -1,4 +1,5 @@
 # Energy Grid Neutrality Gauge
+
 ![image](https://github.com/user-attachments/assets/80c7b7e7-44a6-4af6-af2f-48b0f3d9f002)
 
 ```yaml

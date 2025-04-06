@@ -61,7 +61,9 @@ export class TemplateGauge extends LitElement {
         !changedProperties.has("label") &&
         !changedProperties.has("min") &&
         !changedProperties.has("max") &&
-        !changedProperties.has("needle"))
+        !changedProperties.has("needle") &&
+        !changedProperties.has("segmentsTemplate") &&
+        !changedProperties.has("severityTemplate"))
     ) {
       return;
     }

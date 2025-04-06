@@ -36,7 +36,15 @@ export const severityMap = {
   normal: "var(--info-color)",
 };
 
-const TEMPLATE_KEYS = ["value", "valueText", "name", "min", "max"] as const;
+const TEMPLATE_KEYS = [
+  "value",
+  "valueText",
+  "name",
+  "min",
+  "max",
+  "segmentsTemplate",
+  "severityTemplate",
+] as const;
 type TemplateKey = (typeof TEMPLATE_KEYS)[number];
 
 @customElement(TEMPLATE_CARD_NAME)
@@ -149,13 +157,28 @@ export class TemplateCard
       : this._config?.[key];
   }
 
+  private getSeverity() {
+    const severity = this._templateResults?.["severityTemplate"]?.result;
+    console.info(severity);
+
+    return severity ? Object(severity) : this._config!.severity;
+  }
+
+  private getSegments() {
+    const segmentsTemplate =
+      this._templateResults?.["segmentsTemplate"]?.result;
+    console.info(segmentsTemplate);
+
+    return segmentsTemplate ? Object(segmentsTemplate) : this._config!.segments;
+  }
+
   private _computeSeverity(numberValue: number): string | undefined {
     if (this._config!.needle) {
       return undefined;
     }
 
     // new format
-    let segments = this._config!.segments;
+    let segments = this.getSegments();
     if (segments) {
       segments = [...segments].sort((a, b) => a.from - b.from);
 
@@ -173,7 +196,7 @@ export class TemplateCard
     }
 
     // old format
-    const sections = this._config!.severity;
+    const sections = this.getSeverity();
 
     if (!sections) {
       return severityMap.normal;
@@ -206,7 +229,7 @@ export class TemplateCard
 
   private _severityLevels() {
     // new format
-    const segments = this._config!.segments;
+    const segments = this.getSegments();
     if (segments) {
       return segments.map((segment) => ({
         level: segment?.from,
@@ -216,7 +239,7 @@ export class TemplateCard
     }
 
     // old format
-    const sections = this._config!.severity;
+    const sections = this.getSeverity();
 
     if (!sections) {
       return [{ level: 0, stroke: severityMap.normal }];
