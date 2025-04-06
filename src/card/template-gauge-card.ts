@@ -159,16 +159,12 @@ export class TemplateCard
 
   private getSeverity() {
     const severity = this._templateResults?.["severityTemplate"]?.result;
-    console.info(severity);
-
     return severity ? Object(severity) : this._config!.severity;
   }
 
   private getSegments() {
     const segmentsTemplate =
       this._templateResults?.["segmentsTemplate"]?.result;
-    console.info(segmentsTemplate);
-
     return segmentsTemplate ? Object(segmentsTemplate) : this._config!.segments;
   }
 
