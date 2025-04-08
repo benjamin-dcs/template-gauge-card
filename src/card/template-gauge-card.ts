@@ -339,8 +339,8 @@ export class TemplateCard
     try {
       const gp = new GradientPath({
         path: levelPath,
-        segments: 200,
-        samples: 3,
+        segments: 50,
+        samples: 5,
         removeChild: false,
       });
 
@@ -348,6 +348,8 @@ export class TemplateCard
         type: "path",
         fill: gradientSegments,
         width: 15,
+        stroke: gradientSegments,
+        strokeWidth: 1,
       });
     } catch (e) {
       console.error("[Template Gauge Card] Error gradient:", e);
