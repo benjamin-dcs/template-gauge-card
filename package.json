@@ -26,7 +26,6 @@
     "@mdi/js": "^7.4.47",
     "color": "^4.2.3",
     "color-name": "^2.0.0",
-    "gradient-path": "^2.3.0",
     "hammerjs": "^2.0.8",
     "home-assistant-js-websocket": "^9.4.0",
     "intl-messageformat": "^10.7.16",
