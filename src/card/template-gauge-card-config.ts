@@ -15,7 +15,6 @@ import { ActionConfig, actionConfigStruct } from "../ha";
 const gaugeSegmentStruct = object({
   from: number(),
   color: string(),
-  label: optional(string()),
 });
 
 export type TemplateCardConfig = LovelaceCardConfig & {
@@ -26,6 +25,7 @@ export type TemplateCardConfig = LovelaceCardConfig & {
   min?: string;
   max?: string;
   needle?: boolean;
+  gradient?: boolean;
   tap_action?: ActionConfig;
   hold_action?: ActionConfig;
   double_tap_action?: ActionConfig;
@@ -42,6 +42,7 @@ export const templateCardConfigStruct = assign(
     min: optional(string()),
     max: optional(string()),
     needle: optional(boolean()),
+    gradient: optional(boolean()),
     severity: optional(object()),
     segments: optional(array(gaugeSegmentStruct)),
     tap_action: optional(actionConfigStruct),

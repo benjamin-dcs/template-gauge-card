@@ -8,26 +8,25 @@ This card has the same look and feel as the default [Gauge card](https://www.hom
 
 ## Configuration variables
 
-| Name                  | Type            | Default  | Description                                                          | [Templatable](https://www.home-assistant.io/docs/configuration/templating/) |
-| :-------------------- | :-------------- | :------- | :----------------------------------------------------------------------------------------------------------------------------------|:--------------|
-| `entity`              | string          | Optional | Entity for template and actions                                                                                                    |               |
-| `value`               | string          | Optional | Value for graph                                                                                                                    | ✔️ (`number`) |
-| `valueText`           | string          | Optional | Text for graph                                                                                                                     | ✔️            |
-| `name`                | string          | Optional | Name of gauge entity, displayed beneath graph                                                                                      | ✔️            |
-| `min`                 | string          | Optional | Minimum value for graph                                                                                                            | ✔️ (`number`) |
-| `max`                 | string          | Optional | Maximum value for graph                                                                                                            | ✔️ (`number`) |
-| `needle`              | boolean         | `false`  | Show the gauge as a needle gauge. Required to be set to true, if using segments                                                    |               |
-| `tap_action`          | action          | `none`   | Home assistant action to perform on tap                                                                                            |               |
-| `hold_action`         | action          | `none`   | Home assistant action to perform on hold                                                                                           |               |
-| `double_tap_action`   | action          | `none`   | Home assistant action to perform on double_tap                                                                                     |               |
-| `entity_id`           | `string` `list` | Optional | Only reacts to the state changes of these entities. This can be used if the automatic analysis fails to find all relevant entities |               |
+| Name                | Type            | Default  | Description                                                                                                                        | [Templatable](https://www.home-assistant.io/docs/configuration/templating/) |
+| :------------------ | :-------------- | :------- | :--------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------- |
+| `entity`            | string          | Optional | Entity for template and actions                                                                                                    |                                                                             |
+| `value`             | string          | Optional | Value for graph                                                                                                                    | ✔️ (`number`)                                                               |
+| `valueText`         | string          | Optional | Text for graph                                                                                                                     | ✔️                                                                          |
+| `name`              | string          | Optional | Name of gauge entity, displayed beneath graph                                                                                      | ✔️                                                                          |
+| `min`               | string          | Optional | Minimum value for graph                                                                                                            | ✔️ (`number`)                                                               |
+| `max`               | string          | Optional | Maximum value for graph                                                                                                            | ✔️ (`number`)                                                               |
+| `needle`            | boolean         | `false`  | Show the gauge as a needle gauge. Required to be set to true, if using segments                                                    |                                                                             |
+| `tap_action`        | action          | `none`   | Home assistant action to perform on tap                                                                                            |                                                                             |
+| `hold_action`       | action          | `none`   | Home assistant action to perform on hold                                                                                           |                                                                             |
+| `double_tap_action` | action          | `none`   | Home assistant action to perform on double_tap                                                                                     |                                                                             |
+| `entity_id`         | `string` `list` | Optional | Only reacts to the state changes of these entities. This can be used if the automatic analysis fails to find all relevant entities |                                                                             |
 
 ## Installation
 
 ### HACS
 
-Template Gauge Card is not yet available in HACS. Soon a request to be accepted will be created.  In the meantime, this repo can be added as [`custom repository`](https://www.hacs.xyz/docs/faq/custom_repositories/).
-
+Template Gauge Card is not yet available in HACS. Soon a request to be accepted will be created. In the meantime, this repo can be added as [`custom repository`](https://www.hacs.xyz/docs/faq/custom_repositories/).
 
 ### Manual
 
@@ -47,10 +46,9 @@ Template Gauge Card is not yet available in HACS. Soon a request to be accepted 
 
 If you want to help translating Template Gauge Card, feel free to create an [issue](https://github.com/benjamin-dcs/template-gauge-card/issues) or fork this repo and create an pull-request.
 
-
 ## Support
-<a href="https://www.buymeacoffee.com/benjamindcs" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
+<a href="https://www.buymeacoffee.com/benjamindcs" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 
 ## Credits
 

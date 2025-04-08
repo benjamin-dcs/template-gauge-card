@@ -16,15 +16,16 @@ import {
 
 export const CUSTOM_LABELS = [
   "entity",
-  "value",
-  "valueText",
-  "min",
+  "gradient",
+  "green",
   "max",
+  "min",
   "needle",
   "severity",
   "show_severity",
   "red",
-  "green",
+  "value",
+  "valueText",
   "yellow",
 ];
 
@@ -72,6 +73,7 @@ export class TemplateCardEditor
           schema: [
             { name: "needle", selector: { boolean: {} } },
             { name: "show_severity", selector: { boolean: {} } },
+            { name: "gradient", selector: { boolean: {} } },
           ],
         },
         ...(showSeverity

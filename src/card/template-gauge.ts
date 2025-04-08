@@ -3,7 +3,6 @@ import { css, LitElement, svg } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { styleMap } from "lit/directives/style-map.js";
 import { afterNextRender } from "../ha";
-import type { FrontendLocaleData } from "../ha";
 import { getValueInPercentage, normalize } from "../ha";
 
 const getAngle = (value: number, min: number, max: number) => {
@@ -14,7 +13,6 @@ const getAngle = (value: number, min: number, max: number) => {
 export interface LevelDefinition {
   level: number;
   stroke: string;
-  label?: string;
 }
 
 @customElement("template-gauge")
@@ -30,13 +28,11 @@ export class TemplateGauge extends LitElement {
 
   @property({ attribute: false, type: String }) public valueText?: string;
 
-  @property({ attribute: false }) public locale!: FrontendLocaleData;
-
   @property({ type: Boolean }) public needle = false;
 
-  @property({ type: Array }) public levels?: LevelDefinition[];
+  @property({ type: Boolean }) public gradient = false;
 
-  @property() public label = "";
+  @property({ type: Array }) public levels?: LevelDefinition[];
 
   @state() private _angle = 0;
 
@@ -54,35 +50,50 @@ export class TemplateGauge extends LitElement {
 
   protected updated(changedProperties: PropertyValues) {
     super.updated(changedProperties);
-    if (
-      !this._updated ||
-      (!changedProperties.has("value") &&
-        !changedProperties.has("valueText") &&
-        !changedProperties.has("label") &&
-        !changedProperties.has("min") &&
-        !changedProperties.has("max") &&
-        !changedProperties.has("needle"))
-    ) {
+    // if (
+    //   !this._updated ||
+    //   (!changedProperties.has("value") &&
+    //     !changedProperties.has("valueText") &&
+    //     !changedProperties.has("min") &&
+    //     !changedProperties.has("max") &&
+    //     !changedProperties.has("needle"))
+    // ) {
+    //   return;
+    // }
+
+    if (!this._updated) {
       return;
     }
+
     this._angle = getAngle(this.value, this.min, this.max);
     this._rescaleSvg();
   }
 
   protected render() {
     return svg`
-      <svg viewBox="-50 -50 100 50" class="gauge">
+      <svg id="gradient-dial" viewBox="-50 -50 100 50" class="gauge">
         ${
           !this.needle || !this.levels
             ? svg`<path
-          class="dial"
-          d="M -40 0 A 40 40 0 0 1 40 0"
-        ></path>`
+                class="dial"
+                d="M -40 0 A 40 40 0 0 1 40 0"
+              ></path>`
             : ""
         }
 
         ${
-          this.levels
+          this.needle && this.levels && this.gradient
+            ? svg`<path
+                id="gradient-path"
+                class="dial"
+                d="M -40 0 A 40 40 0 0 1 40 0"
+                style="opacity: 0%;"
+              ></path>`
+            : ""
+        }
+
+        ${
+          this.needle && this.levels && !this.gradient
             ? this.levels
                 .sort((a, b) => a.level - b.level)
                 .map((level, idx) => {
@@ -113,21 +124,29 @@ export class TemplateGauge extends LitElement {
             : ""
         }
         ${
-          this.needle
+          !this.needle
             ? svg`<path
-                class="needle"
-                d="M -25 -2.5 L -47.5 0 L -25 2.5 z"
-                style=${styleMap({ transform: `rotate(${this._angle}deg)` })}
-              >
-              `
-            : svg`<path
                 class="value"
                 d="M -40 0 A 40 40 0 1 0 40 0"
                 style=${styleMap({ transform: `rotate(${this._angle}deg)` })}
-              >`
+              > </path>`
+            : ""
         }
-        </path>
+       
       </svg>
+      ${
+        this.needle
+          ? svg`
+            <svg viewBox="-50 -50 100 50" style="position: absolute; top: 0">
+              <path
+                class="needle"
+                d="M -25 -2.5 L -47.5 0 L -25 2.5 z"
+                style=${styleMap({ transform: `rotate(${this._angle}deg)` })}
+              ></path>
+            </svg> 
+          `
+          : ""
+      }      
       <svg class="text">
         <text class="value-text">
           ${this.valueText}
