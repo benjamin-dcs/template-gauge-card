@@ -30,22 +30,14 @@ type TemplateResults = Partial<
 export const DEFAULT_MIN = 0;
 export const DEFAULT_MAX = 100;
 
-// export const severityMap = {
-//   red: "var(--error-color)",
-//   green: "var(--success-color)",
-//   yellow: "var(--warning-color)",
-//   normal: "var(--info-color)",
-// };
-
-//gradient-path doesn't accept variables as color
-export const infoColor = "#039be5";
-export const successColor = "#43a047";
-export const warningColor = "#ffa600";
-export const errorColor = "#db4437";
+export const errorColor = window.getComputedStyle(document.body).getPropertyValue("--error-color")
+export const succesColor  = window.getComputedStyle(document.body).getPropertyValue("--success-color")
+export const warningColor  = window.getComputedStyle(document.body).getPropertyValue("--warning-color")
+export const infoColor  = window.getComputedStyle(document.body).getPropertyValue("--info-color")
 
 export const severityMap = {
   red: errorColor,
-  green: successColor,
+  green: succesColor,
   yellow: warningColor,
   normal: infoColor,
 };
@@ -325,7 +317,12 @@ export class TemplateCard
       }
 
       const pos = level / diff;
-      const color = severityLevels[i].stroke;
+      let color = severityLevels[i].stroke;
+
+      if ( color.includes('var(') ) {
+        color = window.getComputedStyle(document.body).getPropertyValue(color.slice(4, -1));
+      }
+
       gradientSegments.push({ color: color, pos: pos });
 
       firstSegmentCreated = true;
