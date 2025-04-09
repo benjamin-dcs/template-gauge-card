@@ -1,16 +1,20 @@
-# {{ Template Gauge Card }}
+# Template Gauge Card
+### Build beautiful Gauge cards using templates and gradients!
 
 ## Description
 
-This card has the same look and feel as the default [Gauge card](https://www.home-assistant.io/dashboards/gauge/), but the majority of the fields can, independently, be set with a (templatable) value. Additionally, it is possible to have a different `value` and `valueText`, to (for example) create your own version of the [Grid neutrality gauge](https://www.home-assistant.io/dashboards/energy/#grid-neutrality-gauge). Click [here](examples/energy-grid-neutrality-gauge.md) for an example YAML-code.
+This card is based on the default [Gauge card](https://www.home-assistant.io/dashboards/gauge/), but the majority of the fields can, independently, be set with a (templatable) value. Additionally, it is possible to have a different `value` and `valueText` and a _beautiful_ 🌈
+**gradient** can be applied!
 
 ![image](https://github.com/user-attachments/assets/ccefe63d-6cdc-448f-97a8-98b32e926ff0)
+
+![image](https://github.com/user-attachments/assets/85ea5f7b-6fdd-403d-8173-025637b812db)
 
 ## Configuration variables
 
 | Name                 | Type               | Default  | Description                                                                                                                                                          | [Templatable](https://www.home-assistant.io/docs/configuration/templating/) |
 | :------------------- | :----------------- | :------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------- |
-| `entity`             | string             | Optional | Entity for template and actions                                                                                                                                      |                                                                             |
+| `entity`             | string             | Optional | Entity for template and actions (e.g.: `{{ states(entity) }}`)                                                                                                       |                                                                             |
 | `value`              | string             | Optional | Value for graph                                                                                                                                                      | ✔️ (`number`)                                                               |
 | `valueText`          | string             | Optional | Text for graph                                                                                                                                                       | ✔️                                                                          |
 | `name`               | string             | Optional | Name of gauge entity, displayed beneath graph                                                                                                                        | ✔️                                                                          |
@@ -86,6 +90,10 @@ segmentsTemplate: |-
     ]
   }}
 ```
+
+## Examples
+
+- [Energy Grid Neutrality Card](examples/energy-grid-neutrality-gauge.md)
 
 ## Installation
 
