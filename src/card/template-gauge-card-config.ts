@@ -42,8 +42,8 @@ export type TemplateCardConfig = LovelaceCardConfig & {
   value: string;
   valueText?: string;
   name?: string;
-  min?: string;
-  max?: string;
+  min?: number | string;
+  max?: number | string;
   needle?: boolean;
   severity?: SeverityConfig;
   severityTemplate?: string;
@@ -64,8 +64,8 @@ export const templateCardConfigStruct = assign(
     value: optional(string()),
     valueText: optional(string()),
     name: optional(string()),
-    min: optional(string()),
-    max: optional(string()),
+    min: optional(union([number(), string()])),
+    max: optional(union([number(), string()])),
     needle: optional(boolean()),
     severity: optional(severityStruct),
     severityTemplate: optional(string()),

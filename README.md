@@ -8,25 +8,90 @@ This card has the same look and feel as the default [Gauge card](https://www.hom
 
 ## Configuration variables
 
-| Name                | Type            | Default  | Description                                                                                                                        | [Templatable](https://www.home-assistant.io/docs/configuration/templating/) |
-| :------------------ | :-------------- | :------- | :--------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------- |
-| `entity`            | string          | Optional | Entity for template and actions                                                                                                    |                                                                             |
-| `value`             | string          | Optional | Value for graph                                                                                                                    | ✔️ (`number`)                                                               |
-| `valueText`         | string          | Optional | Text for graph                                                                                                                     | ✔️                                                                          |
-| `name`              | string          | Optional | Name of gauge entity, displayed beneath graph                                                                                      | ✔️                                                                          |
-| `min`               | string          | Optional | Minimum value for graph                                                                                                            | ✔️ (`number`)                                                               |
-| `max`               | string          | Optional | Maximum value for graph                                                                                                            | ✔️ (`number`)                                                               |
-| `needle`            | boolean         | `false`  | Show the gauge as a needle gauge. Required to be set to true, if using segments                                                    |                                                                             |
-| `tap_action`        | action          | `none`   | Home assistant action to perform on tap                                                                                            |                                                                             |
-| `hold_action`       | action          | `none`   | Home assistant action to perform on hold                                                                                           |                                                                             |
-| `double_tap_action` | action          | `none`   | Home assistant action to perform on double_tap                                                                                     |                                                                             |
-| `entity_id`         | `string` `list` | Optional | Only reacts to the state changes of these entities. This can be used if the automatic analysis fails to find all relevant entities |                                                                             |
+| Name                 | Type               | Default  | Description                                                                                                                                                          | [Templatable](https://www.home-assistant.io/docs/configuration/templating/) |
+| :------------------- | :----------------- | :------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------- |
+| `entity`             | string             | Optional | Entity for template and actions                                                                                                                                      |                                                                             |
+| `value`              | string             | Optional | Value for graph                                                                                                                                                      | ✔️ (`number`)                                                               |
+| `valueText`          | string             | Optional | Text for graph                                                                                                                                                       | ✔️                                                                          |
+| `name`               | string             | Optional | Name of gauge entity, displayed beneath graph                                                                                                                        | ✔️                                                                          |
+| `min`                | number or string   | Optional | Minimum value for graph                                                                                                                                              | ✔️ (`number`)                                                               |
+| `max`                | number or string   | Optional | Maximum value for graph                                                                                                                                              | ✔️ (`number`)                                                               |
+| `needle`             | boolean            | `false`  | Show the gauge as a needle gauge. Required to be set to true, if using segments                                                                                      |                                                                             |
+| `severity`           | map<sup>1</sup>    | Optional | Allows setting of colors for different numbers                                                                                                                       |                                                                             |
+| `severityTemplate`   | string<sup>2</sup> | `false`  | Allows setting of colors for different numbers. SeverityTemplate will override the severity settings                                                                 | ✔️ (`severity map`)                                                         |
+| `segments`           | list<sup>3</sup>   | `false`  | List of colors and their corresponding start values. Segments will override the severity and severityTemplate settings. Needle required to be true                   |                                                                             |
+| `segmentsTemplate`   | string<sup>4</sup> | `false`  | List of colors and their corresponding start values. SegmentsTemplate will override the severity, severityTemplate and segments settings. Needle required to be true | ✔️ (`segments array`)                                                       |
+| `gradient`           | boolean            | `false`  | Shows severity(Template) or segments(Template) as a beautiful gradient                                                                                               |                                                                             |
+| `gradientResolution` | Optional           | `false`  | Level of detail for the gradient. Must be `low`, `medium` or `high` (default `medium`)                                                                               |                                                                             |
+| `tap_action`         | action             | `none`   | Home assistant action to perform on tap                                                                                                                              |                                                                             |
+| `hold_action`        | action             | `none`   | Home assistant action to perform on hold                                                                                                                             |                                                                             |
+| `double_tap_action`  | action             | `none`   | Home assistant action to perform on double_tap                                                                                                                       |                                                                             |
+| `entity_id`          | string or list     | Optional | Only reacts to the state changes of these entities. This can be used if the automatic analysis fails to find all relevant entities                                   |                                                                             |
+
+### <sup>1</sup> `severity` example
+
+```yaml
+severity:
+  green: 30
+  yellow: 20
+  red: 0
+```
+
+### <sup>2</sup> `severityTemplate` example
+
+```yaml
+severityTemplate: |-
+  {{
+    { 
+      "red": 0, 
+      "yellow": 20, 
+      "green": 30
+    }
+  }}
+```
+
+### <sup>3</sup> `segments`
+
+```yaml
+segments:
+  - from: 0
+    color: "#4caf50"
+  - from: 25
+    color: "#8bc34a"
+  - from: 50
+    color: "#ffeb3b"
+  - from: 75
+    color: "#ff9800"
+  - from: 100
+    color: "#f44336"
+  - from: 125
+    color: "#926bc7"
+  - from: 150
+    color: "#795548"
+```
+
+### <sup>4</sup> `segmentsTemplate` example
+
+```yaml
+segmentsTemplate: |-
+  {{
+    [
+      { "from": 0, "color": "#4caf50" },
+      { "from": 25, "color": "#8bc34a" },
+      { "from": 50, "color": "#ffeb3b" },
+      { "from": 75, "color": "#ff9800" },
+      { "from": 100, "color": "#f44336" },
+      { "from": 125, "color": "#926bc7" },
+      { "from": 150, "color":"#795548"  }
+    ]
+  }}
+```
 
 ## Installation
 
 ### HACS
 
-Template Gauge Card is not yet available in HACS. Soon a request to be accepted will be created.  In the meantime, this repo can be added as [`custom repository`](https://www.hacs.xyz/docs/faq/custom_repositories/).
+Template Gauge Card is not yet available in HACS. Soon a request to be accepted will be created. In the meantime, this repo can be added as [`custom repository`](https://www.hacs.xyz/docs/faq/custom_repositories/).
 
 Use `https://github.com/benjamin-dcs/template-gauge-card` as **Repository** and `Dashboard` as **Type**
 

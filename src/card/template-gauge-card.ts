@@ -23,7 +23,18 @@ import {
   subscribeRenderTemplate,
 } from "../ha";
 import { CacheManager } from "../mushroom/utils/cache-manager";
-import { TEMPLATE_CARD_EDITOR_NAME, TEMPLATE_CARD_NAME, DEFAULT_MIN, DEFAULT_MAX, DEFAULT_GRADIENT_RESOLUTION, GRADIENT_RESOLUTION_MAP, INFO_COLOR, WARNING_COLOR, ERROR_COLOR, SEVERITY_MAP  } from "./const";
+import {
+  TEMPLATE_CARD_EDITOR_NAME,
+  TEMPLATE_CARD_NAME,
+  DEFAULT_MIN,
+  DEFAULT_MAX,
+  DEFAULT_GRADIENT_RESOLUTION,
+  GRADIENT_RESOLUTION_MAP,
+  INFO_COLOR,
+  WARNING_COLOR,
+  ERROR_COLOR,
+  SEVERITY_MAP,
+} from "./const";
 import { TemplateCardConfig } from "./template-gauge-card-config";
 import { registerCustomCard } from "../mushroom/utils/custom-cards";
 import "./template-gauge";
@@ -82,14 +93,12 @@ export class TemplateCard extends LitElement implements LovelaceCard {
       segments: [
         { from: -1, color: "red" },
         { from: -0.5, color: "yellow" },
-        { from: 0, color: "green" }
+        { from: 0, color: "green" },
       ],
       gradient: true,
-      gradientResolution: "medium"      
+      gradientResolution: "medium",
     };
   }
-
-
 
   @property({ attribute: false }) public hass?: HomeAssistant;
 
@@ -170,7 +179,7 @@ export class TemplateCard extends LitElement implements LovelaceCard {
 
   public isTemplate(key: TemplateKey) {
     const value = this._config?.[key];
-    return value?.includes("{");
+    return String(value)?.includes("{");
   }
 
   private getValue(key: TemplateKey) {
@@ -442,7 +451,7 @@ export class TemplateCard extends LitElement implements LovelaceCard {
           };
         },
         {
-          template: this._config[key] ?? "",
+          template: String(this._config[key]) ?? "",
           entity_ids: this._config.entity_id,
           variables: {
             config: this._config,
