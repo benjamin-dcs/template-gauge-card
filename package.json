@@ -1,6 +1,6 @@
 {
   "name": "template-gauge-card",
-  "version": "0.3.0-b2",
+  "version": "0.3.0-b3",
   "description": "Template Gauge Card",
   "main": "index.js",
   "scripts": {
