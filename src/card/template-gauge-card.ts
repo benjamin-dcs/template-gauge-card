@@ -23,7 +23,7 @@ import {
   subscribeRenderTemplate,
 } from "../ha";
 import { CacheManager } from "../mushroom/utils/cache-manager";
-import { TEMPLATE_CARD_EDITOR_NAME, TEMPLATE_CARD_NAME } from "./const";
+import { TEMPLATE_CARD_EDITOR_NAME, TEMPLATE_CARD_NAME, DEFAULT_MIN, DEFAULT_MAX, DEFAULT_GRADIENT_RESOLUTION, GRADIENT_RESOLUTION_MAP, INFO_COLOR, WARNING_COLOR, ERROR_COLOR, SEVERITY_MAP  } from "./const";
 import { TemplateCardConfig } from "./template-gauge-card-config";
 import { registerCustomCard } from "../mushroom/utils/custom-cards";
 import "./template-gauge";
@@ -39,44 +39,6 @@ registerCustomCard({
   name: "Template Gauge Card",
   description: "Build beautiful Gauge cards using templates and gradients",
 });
-
-export const DEFAULT_MIN = 0;
-export const DEFAULT_MAX = 100;
-export const DEFAULT_GRADIENT_RESOLUTION = "medium";
-export const gradientResolutionMap = {
-  low: {
-    segments: 25,
-    samples: 2,
-  },
-  medium: {
-    segments: 50,
-    samples: 5,
-  },
-  high: {
-    segments: 100,
-    samples: 10,
-  },
-};
-
-export const errorColor = window
-  .getComputedStyle(document.body)
-  .getPropertyValue("--error-color") || "#db4437";
-export const successColor = window
-  .getComputedStyle(document.body)
-  .getPropertyValue("--success-color") || "#43a047";
-export const warningColor = window
-  .getComputedStyle(document.body)
-  .getPropertyValue("--warning-color") || "#ffa600";
-export const infoColor = window
-  .getComputedStyle(document.body)
-  .getPropertyValue("--info-color") || "#039be5";
-
-export const severityMap = {
-  red: errorColor,
-  green: successColor,
-  yellow: warningColor,
-  normal: infoColor,
-};
 
 const TEMPLATE_KEYS = ["value", "valueText", "name", "min", "max"] as const;
 type TemplateKey = (typeof TEMPLATE_KEYS)[number];
@@ -229,14 +191,14 @@ export class TemplateCard extends LitElement implements LovelaceCard {
           return segment.color;
         }
       }
-      return severityMap.normal;
+      return SEVERITY_MAP.normal;
     }
 
     // old format
     const sections = this._config!.severity;
 
     if (!sections) {
-      return severityMap.normal;
+      return SEVERITY_MAP.normal;
     }
 
     const sectionsArray = Object.keys(sections);
@@ -246,22 +208,22 @@ export class TemplateCard extends LitElement implements LovelaceCard {
     ]);
 
     for (const severity of sortable) {
-      if (severityMap[severity[0]] == null || isNaN(severity[1])) {
-        return severityMap.normal;
+      if (SEVERITY_MAP[severity[0]] == null || isNaN(severity[1])) {
+        return SEVERITY_MAP.normal;
       }
     }
     sortable.sort((a, b) => a[1] - b[1]);
 
     if (numberValue >= sortable[0][1] && numberValue < sortable[1][1]) {
-      return severityMap[sortable[0][0]];
+      return SEVERITY_MAP[sortable[0][0]];
     }
     if (numberValue >= sortable[1][1] && numberValue < sortable[2][1]) {
-      return severityMap[sortable[1][0]];
+      return SEVERITY_MAP[sortable[1][0]];
     }
     if (numberValue >= sortable[2][1]) {
-      return severityMap[sortable[2][0]];
+      return SEVERITY_MAP[sortable[2][0]];
     }
-    return severityMap.normal;
+    return SEVERITY_MAP.normal;
   }
 
   private _severityLevels() {
@@ -278,13 +240,13 @@ export class TemplateCard extends LitElement implements LovelaceCard {
     const sections = this._config!.severity;
 
     if (!sections) {
-      return [{ level: 0, stroke: severityMap.normal }];
+      return [{ level: 0, stroke: SEVERITY_MAP.normal }];
     }
 
     const sectionsArray = Object.keys(sections);
     return sectionsArray.map((severity) => ({
       level: sections[severity],
-      stroke: severityMap[severity],
+      stroke: SEVERITY_MAP[severity],
     }));
   }
 
@@ -355,7 +317,7 @@ export class TemplateCard extends LitElement implements LovelaceCard {
       level += min * -1;
 
       if (!firstSegmentCreated && level > min) {
-        gradientSegments.push({ color: infoColor, pos: 0 });
+        gradientSegments.push({ color: INFO_COLOR, pos: 0 });
       }
 
       const pos = level / diff;
@@ -374,8 +336,8 @@ export class TemplateCard extends LitElement implements LovelaceCard {
     // gradient-path expects at least 2 segments
     if (gradientSegments.length < 2) {
       gradientSegments = [
-        { color: warningColor, pos: 0 },
-        { color: errorColor, pos: 1 },
+        { color: WARNING_COLOR, pos: 0 },
+        { color: ERROR_COLOR, pos: 1 },
       ];
     }
 
@@ -385,7 +347,7 @@ export class TemplateCard extends LitElement implements LovelaceCard {
     const gradientResolution: string =
       this._config &&
       this._config.gradientResolution !== undefined &&
-      Object.keys(gradientResolutionMap).includes(
+      Object.keys(GRADIENT_RESOLUTION_MAP).includes(
         this._config.gradientResolution
       )
         ? this._config.gradientResolution
@@ -394,8 +356,8 @@ export class TemplateCard extends LitElement implements LovelaceCard {
     try {
       const gp = new GradientPath({
         path: levelPath,
-        segments: gradientResolutionMap[gradientResolution].segments,
-        samples: gradientResolutionMap[gradientResolution].samples,
+        segments: GRADIENT_RESOLUTION_MAP[gradientResolution].segments,
+        samples: GRADIENT_RESOLUTION_MAP[gradientResolution].samples,
         removeChild: false,
       });
 
@@ -407,7 +369,7 @@ export class TemplateCard extends LitElement implements LovelaceCard {
         strokeWidth: 1,
       });
     } catch (e) {
-      console.error("[Template Gauge Card] Error gradient:", e);
+      console.error("{{ Template Gauge Card }} Error gradient:", e);
     }
   }
 
