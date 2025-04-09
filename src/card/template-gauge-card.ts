@@ -60,20 +60,20 @@ export const gradientResolutionMap = {
 
 export const errorColor = window
   .getComputedStyle(document.body)
-  .getPropertyValue("--error-color") || "#ffffff";
-export const succesColor = window
+  .getPropertyValue("--error-color") || "#db4437";
+export const successColor = window
   .getComputedStyle(document.body)
-  .getPropertyValue("--success-color") || "#ffffff";
+  .getPropertyValue("--success-color") || "#43a047";
 export const warningColor = window
   .getComputedStyle(document.body)
-  .getPropertyValue("--warning-color") || "#ffffff";
+  .getPropertyValue("--warning-color") || "#ffa600";
 export const infoColor = window
   .getComputedStyle(document.body)
-  .getPropertyValue("--info-color") || "#ffffff";
+  .getPropertyValue("--info-color") || "#039be5";
 
 export const severityMap = {
   red: errorColor,
-  green: succesColor,
+  green: successColor,
   yellow: warningColor,
   normal: infoColor,
 };
