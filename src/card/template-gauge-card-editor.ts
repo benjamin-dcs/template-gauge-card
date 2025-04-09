@@ -41,7 +41,7 @@ export class TemplateCardEditor
   @state() private _config?: TemplateCardConfig;
 
   private _schema = memoizeOne(
-    (showSeverity: boolean, showGradientResolution: boolean) =>
+    (showSeverity: boolean, showGradient: boolean, showGradientResolution: boolean) =>
       [
         {
           name: "entity",
@@ -76,49 +76,66 @@ export class TemplateCardEditor
           type: "grid",
           schema: [
             { name: "needle", selector: { boolean: {} } },
-            { name: "show_severity", selector: { boolean: {} } },
+            { },
           ],
         },
-        {
-          name: "",
-          type: "grid",
-          schema: [
-            { name: "gradient", selector: { boolean: {} } },
-            ...(showGradientResolution
-              ? [
-                  {
-                    name: "gradientResolution",
-                    selector: {
-                      select: {
-                        value: "gradientResolution",
-                        options: [
-                          {
-                            value: "low",
-                            label: this._customLocalize(
-                              "gradientResolutionOptions.low"
-                            ),
+        ...(showGradient
+          ? [
+              {
+                name: "",
+                type: "grid",
+                schema: [
+                  { name: "gradient", selector: { boolean: {} } },
+                  ...(showGradientResolution
+                    ? [
+                        {
+                          name: "gradientResolution",
+                          selector: {
+                            select: {
+                              value: "gradientResolution",
+                              options: [
+                                {
+                                  value: "low",
+                                  label: this._customLocalize(
+                                    "gradientResolutionOptions.low"
+                                  ),
+                                },
+                                {
+                                  value: "medium",
+                                  label: this._customLocalize(
+                                    "gradientResolutionOptions.medium"
+                                  ),
+                                },
+                                {
+                                  value: "high",
+                                  label: this._customLocalize(
+                                    "gradientResolutionOptions.high"
+                                  ),
+                                },
+                              ],
+                              mode: "dropdown",
+                            },
                           },
-                          {
-                            value: "medium",
-                            label: this._customLocalize(
-                              "gradientResolutionOptions.medium"
-                            ),
-                          },
-                          {
-                            value: "high",
-                            label: this._customLocalize(
-                              "gradientResolutionOptions.high"
-                            ),
-                          },
-                        ],
-                        mode: "dropdown",
-                      },
-                    },
-                  },
-                ]
-              : [{}]),
-          ],
-        },
+                        },
+                      ]
+                    : [{}]),
+                ],
+              },
+            ]
+          : [{}]),
+        ...(showGradient
+          ? 
+            [{
+              name: "",
+              type: "grid",
+              schema: [
+                { name: "show_severity", selector: { boolean: {} } },
+                {}
+              ],
+            }]
+          : [{}]
+        ),
+
         ...(showSeverity
           ? ([
               {
@@ -180,9 +197,11 @@ export class TemplateCardEditor
     if (!this.hass || !this._config) {
       return nothing;
     }
+    console.log('gradient', this._config!.gradient !== undefined);
     const schema = this._schema(
       this._config!.severity !== undefined,
-      this._config!.gradient !== undefined ? this._config!.gradient : false
+      this._config?.needle ?? false,
+      this._config?.gradient ?? false
     );
     const data = {
       show_severity: this._config!.severity !== undefined,
