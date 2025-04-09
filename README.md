@@ -1,5 +1,5 @@
 # Template Gauge Card
-### Build beautiful Gauge cards using templates and gradients!
+### Build beautiful Gauge cards using 🛠️ templates and 🌈 gradients!
 
 ## Description
 
