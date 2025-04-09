@@ -1,11 +1,11 @@
+import { LitElement } from "lit";
 import { html, nothing } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 import memoizeOne from "memoize-one";
 import { assert } from "superstruct";
-import { LovelaceCardEditor, fireEvent } from "../ha";
+import { HomeAssistant, LovelaceCardEditor, fireEvent } from "../ha";
 import setupCustomlocalize from "../localize";
 import { computeActionsFormSchema } from "../mushroom/shared/config/actions-config";
-import { TemplateGaugeBaseElement } from "../mushroom/utils/base-element";
 import { HaFormSchema } from "../mushroom/utils/form/ha-form";
 import { loadHaComponents } from "../mushroom/utils/loader";
 import { TEMPLATE_CARD_EDITOR_NAME } from "./const";
@@ -31,9 +31,11 @@ export const CUSTOM_LABELS = [
 
 @customElement(TEMPLATE_CARD_EDITOR_NAME)
 export class TemplateCardEditor
-  extends TemplateGaugeBaseElement
+  extends LitElement
   implements LovelaceCardEditor
 {
+  @property({ attribute: false }) public hass?: HomeAssistant;
+
   @state() private _config?: TemplateCardConfig;
 
   private _schema = memoizeOne(
