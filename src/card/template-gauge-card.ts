@@ -40,7 +40,15 @@ registerCustomCard({
   description: "Build beautiful Gauge cards using templates and gradients",
 });
 
-const TEMPLATE_KEYS = ["value", "valueText", "name", "min", "max"] as const;
+const TEMPLATE_KEYS = [
+  "value",
+  "valueText",
+  "name",
+  "min",
+  "max",
+  "segmentsTemplate",
+  "severityTemplate",
+] as const;
 type TemplateKey = (typeof TEMPLATE_KEYS)[number];
 
 type gradienSegment = {
@@ -171,13 +179,24 @@ export class TemplateCard extends LitElement implements LovelaceCard {
       : this._config?.[key];
   }
 
+  private getSeverity() {
+    const severity = this._templateResults?.["severityTemplate"]?.result;
+    return severity ? Object(severity) : this._config!.severity;
+  }
+
+  private getSegments() {
+    const segmentsTemplate =
+      this._templateResults?.["segmentsTemplate"]?.result;
+    return segmentsTemplate ? Object(segmentsTemplate) : this._config!.segments;
+  }
+
   private _computeSeverity(numberValue: number): string | undefined {
     if (this._config!.needle) {
       return undefined;
     }
 
     // new format
-    let segments = this._config!.segments;
+    let segments = this.getSegments();
     if (segments) {
       segments = [...segments].sort((a, b) => a.from - b.from);
 
@@ -195,7 +214,7 @@ export class TemplateCard extends LitElement implements LovelaceCard {
     }
 
     // old format
-    const sections = this._config!.severity;
+    const sections = this.getSeverity();
 
     if (!sections) {
       return SEVERITY_MAP.normal;
@@ -228,7 +247,7 @@ export class TemplateCard extends LitElement implements LovelaceCard {
 
   private _severityLevels() {
     // new format
-    const segments = this._config!.segments;
+    const segments = this.getSegments();
     if (segments) {
       return segments.map((segment) => ({
         level: segment?.from,
@@ -237,7 +256,7 @@ export class TemplateCard extends LitElement implements LovelaceCard {
     }
 
     // old format
-    const sections = this._config!.severity;
+    const sections = this.getSeverity();
 
     if (!sections) {
       return [{ level: 0, stroke: SEVERITY_MAP.normal }];

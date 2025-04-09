@@ -26,7 +26,9 @@ This card has the same look and feel as the default [Gauge card](https://www.hom
 
 ### HACS
 
-Template Gauge Card is not yet available in HACS. Soon a request to be accepted will be created. In the meantime, this repo can be added as [`custom repository`](https://www.hacs.xyz/docs/faq/custom_repositories/).
+Template Gauge Card is not yet available in HACS. Soon a request to be accepted will be created.  In the meantime, this repo can be added as [`custom repository`](https://www.hacs.xyz/docs/faq/custom_repositories/).
+
+Use `https://github.com/benjamin-dcs/template-gauge-card` as **Repository** and `Dashboard` as **Type**
 
 ### Manual
 

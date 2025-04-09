@@ -24,7 +24,13 @@ export interface GaugeSegment {
   color: string;
 }
 
-export const gaugeSegmentStruct = object({
+const severityStruct = object({
+  green: number(),
+  yellow: number(),
+  red: number(),
+});
+
+const gaugeSegmentStruct = object({
   from: number(),
   color: string(),
 });
@@ -38,9 +44,11 @@ export type TemplateCardConfig = LovelaceCardConfig & {
   name?: string;
   min?: string;
   max?: string;
-  severity?: SeverityConfig;
   needle?: boolean;
+  severity?: SeverityConfig;
+  severityTemplate?: string;
   segments?: GaugeSegment[];
+  segmentsTemplate?: string;
   gradient?: boolean;
   gradientResolution?: string;
   tap_action?: ActionConfig;
@@ -59,10 +67,12 @@ export const templateCardConfigStruct = assign(
     min: optional(string()),
     max: optional(string()),
     needle: optional(boolean()),
+    severity: optional(severityStruct),
+    severityTemplate: optional(string()),
+    segments: optional(array(gaugeSegmentStruct)),
+    segmentsTemplate: optional(string()),
     gradient: optional(boolean()),
     gradientResolution: optional(gradientResolutionStruct),
-    severity: optional(object()),
-    segments: optional(array(gaugeSegmentStruct)),
     tap_action: optional(actionConfigStruct),
     hold_action: optional(actionConfigStruct),
     double_tap_action: optional(actionConfigStruct),
