@@ -3,6 +3,12 @@
     "card": {
       "entity": "Entity",
       "gradient": "Gradient",
+      "gradientResolution": "Gradient resolution",
+      "gradientResolutionOptions": {
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High"
+      },
       "green": "Green",
       "max": "Max",
       "min": "Min",

@@ -17,6 +17,8 @@ import {
 export const CUSTOM_LABELS = [
   "entity",
   "gradient",
+  "gradientResolution",
+  "gradientResolutionOptions",
   "green",
   "max",
   "min",
@@ -39,7 +41,7 @@ export class TemplateCardEditor
   @state() private _config?: TemplateCardConfig;
 
   private _schema = memoizeOne(
-    (showSeverity: boolean) =>
+    (showSeverity: boolean, showGradientResolution: boolean) =>
       [
         {
           name: "entity",
@@ -75,7 +77,46 @@ export class TemplateCardEditor
           schema: [
             { name: "needle", selector: { boolean: {} } },
             { name: "show_severity", selector: { boolean: {} } },
+          ],
+        },
+        {
+          name: "",
+          type: "grid",
+          schema: [
             { name: "gradient", selector: { boolean: {} } },
+            ...(showGradientResolution
+              ? [
+                  {
+                    name: "gradientResolution",
+                    selector: {
+                      select: {
+                        value: "gradientResolution",
+                        options: [
+                          {
+                            value: "low",
+                            label: this._customLocalize(
+                              "gradientResolutionOptions.low"
+                            ),
+                          },
+                          {
+                            value: "medium",
+                            label: this._customLocalize(
+                              "gradientResolutionOptions.medium"
+                            ),
+                          },
+                          {
+                            value: "high",
+                            label: this._customLocalize(
+                              "gradientResolutionOptions.high"
+                            ),
+                          },
+                        ],
+                        mode: "dropdown",
+                      },
+                    },
+                  },
+                ]
+              : [{}]),
           ],
         },
         ...(showSeverity
@@ -130,12 +171,19 @@ export class TemplateCardEditor
     );
   };
 
+  private _customLocalize(value: string) {
+    const customLocalize = setupCustomlocalize(this.hass!);
+    return customLocalize(`editor.card.${value}`);
+  }
+
   protected render() {
     if (!this.hass || !this._config) {
       return nothing;
     }
-
-    const schema = this._schema(this._config!.severity !== undefined);
+    const schema = this._schema(
+      this._config!.severity !== undefined,
+      this._config!.gradient !== undefined ? this._config!.gradient : false
+    );
     const data = {
       show_severity: this._config!.severity !== undefined,
       ...this._config,
@@ -155,6 +203,7 @@ export class TemplateCardEditor
   private _valueChanged(ev: CustomEvent): void {
     let config = ev.detail.value;
 
+    // Severity
     if (config.show_severity) {
       config = {
         ...config,
@@ -172,6 +221,16 @@ export class TemplateCardEditor
     delete config.green;
     delete config.yellow;
     delete config.red;
+
+    // Gradient
+    if (config.gradient) {
+      config = {
+        ...config,
+        gradientResolution: config.gradientResolution || "medium",
+      };
+    } else {
+      delete config.gradientResolution;
+    }
 
     fireEvent(this, "config-changed", { config });
   }

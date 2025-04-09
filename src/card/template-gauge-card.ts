@@ -1,5 +1,12 @@
 import { UnsubscribeFunc } from "home-assistant-js-websocket";
-import { css, CSSResultGroup, html, LitElement, nothing, PropertyValues } from "lit";
+import {
+  css,
+  CSSResultGroup,
+  html,
+  LitElement,
+  nothing,
+  PropertyValues,
+} from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { GradientPath } from "../gradient-path/gradient-path";
 import { styleMap } from "lit/directives/style-map.js";
@@ -18,6 +25,7 @@ import {
 import { CacheManager } from "../mushroom/utils/cache-manager";
 import { TEMPLATE_CARD_EDITOR_NAME, TEMPLATE_CARD_NAME } from "./const";
 import { TemplateCardConfig } from "./template-gauge-card-config";
+import { registerCustomCard } from "../mushroom/utils/custom-cards";
 import "./template-gauge";
 
 const templateCache = new CacheManager<TemplateResults>(1000);
@@ -26,13 +34,42 @@ type TemplateResults = Partial<
   Record<TemplateKey, RenderTemplateResult | undefined>
 >;
 
+registerCustomCard({
+  type: TEMPLATE_CARD_NAME,
+  name: "Template Gauge Card",
+  description: "Build beautiful Gauge cards using templates and gradients",
+});
+
 export const DEFAULT_MIN = 0;
 export const DEFAULT_MAX = 100;
+export const DEFAULT_GRADIENT_RESOLUTION = "medium";
+export const gradientResolutionMap = {
+  low: {
+    segments: 25,
+    samples: 2,
+  },
+  medium: {
+    segments: 50,
+    samples: 5,
+  },
+  high: {
+    segments: 100,
+    samples: 10,
+  },
+};
 
-export const errorColor = window.getComputedStyle(document.body).getPropertyValue("--error-color")
-export const succesColor  = window.getComputedStyle(document.body).getPropertyValue("--success-color")
-export const warningColor  = window.getComputedStyle(document.body).getPropertyValue("--warning-color")
-export const infoColor  = window.getComputedStyle(document.body).getPropertyValue("--info-color")
+export const errorColor = window
+  .getComputedStyle(document.body)
+  .getPropertyValue("--error-color") || "#ffffff";
+export const succesColor = window
+  .getComputedStyle(document.body)
+  .getPropertyValue("--success-color") || "#ffffff";
+export const warningColor = window
+  .getComputedStyle(document.body)
+  .getPropertyValue("--warning-color") || "#ffffff";
+export const infoColor = window
+  .getComputedStyle(document.body)
+  .getPropertyValue("--info-color") || "#ffffff";
 
 export const severityMap = {
   red: errorColor,
@@ -50,10 +87,7 @@ type gradienSegment = {
 };
 
 @customElement(TEMPLATE_CARD_NAME)
-export class TemplateCard
-  extends LitElement
-  implements LovelaceCard
-{
+export class TemplateCard extends LitElement implements LovelaceCard {
   @property({ type: Number }) public _prev_min?: number;
 
   @property({ type: Number }) public _prev_max?: number;
@@ -70,12 +104,22 @@ export class TemplateCard
   ): Promise<TemplateCardConfig> {
     return {
       type: `custom:${TEMPLATE_CARD_NAME}`,
-      value: "{{ (range(0, 200) | random) / 100 -1 }}",
-      valueText: "{{ (range(0, 200) | random) }} W",
+      value: "{{ (range(0, 200) | random) / 100 - 1 }}",
+      valueText: "{{ (range(0, 200) | random) }}",
       min: "-1",
       max: "1",
+      needle: true,
+      segments: [
+        { from: -1, color: "red" },
+        { from: -0.5, color: "yellow" },
+        { from: 0, color: "green" }
+      ],
+      gradient: true,
+      gradientResolution: "medium"      
     };
   }
+
+
 
   @property({ attribute: false }) public hass?: HomeAssistant;
 
@@ -291,9 +335,6 @@ export class TemplateCard
   }
 
   private _renderGradient(min: number, max: number): void {
-    this._prev_min = min;
-    this._prev_max = max;
-
     const levelPath = this.renderRoot
       .querySelector("ha-card > template-gauge")
       ?.shadowRoot?.querySelector("#gradient-path");
@@ -320,35 +361,48 @@ export class TemplateCard
       const pos = level / diff;
       let color = severityLevels[i].stroke;
 
-      if ( color.includes('var(') ) {
-        color = window.getComputedStyle(document.body).getPropertyValue(color.slice(4, -1));
+      if (color.includes("var(")) {
+        color = window
+          .getComputedStyle(document.body)
+          .getPropertyValue(color.slice(4, -1));
       }
 
       gradientSegments.push({ color: color, pos: pos });
-
       firstSegmentCreated = true;
     }
-    
+
     // gradient-path expects at least 2 segments
-    if ( gradientSegments.length < 2 ) {
+    if (gradientSegments.length < 2) {
       gradientSegments = [
         { color: warningColor, pos: 0 },
-        { color: errorColor, pos: 1 }
-      ]
+        { color: errorColor, pos: 1 },
+      ];
     }
+
+    //gradient-path expects an ordered array
+    gradientSegments = gradientSegments.sort((a, b) => a.pos - b.pos);
+
+    const gradientResolution: string =
+      this._config &&
+      this._config.gradientResolution !== undefined &&
+      Object.keys(gradientResolutionMap).includes(
+        this._config.gradientResolution
+      )
+        ? this._config.gradientResolution
+        : DEFAULT_GRADIENT_RESOLUTION;
 
     try {
       const gp = new GradientPath({
         path: levelPath,
-        segments: 50,
-        samples: 5,
+        segments: gradientResolutionMap[gradientResolution].segments,
+        samples: gradientResolutionMap[gradientResolution].samples,
         removeChild: false,
       });
 
       gp.render({
         type: "path",
         fill: gradientSegments,
-        width: 15,
+        width: 14,
         stroke: gradientSegments,
         strokeWidth: 1,
       });
@@ -370,20 +424,13 @@ export class TemplateCard
       ? Number(this.getValue("max"))
       : DEFAULT_MAX;
 
-    // if (
-    //   this._config.gradient &&
-    //   (min != this._prev_min || max != this._prev_max)
-    // ) {
-    //   this._renderGradient(min, max);
-    // } else {
-    //   console.warn("Not rendering gradient");
-    // }
-
-    if (
-      this._config.gradient
-    ) {
+    // if ((min !== this._prev_min || max !== this._prev_max) && this._config.gradient) {
+    if (this._config.gradient) {
       this._renderGradient(min, max);
-    } 
+    }
+
+    this._prev_min = min;
+    this._prev_max = max;
 
     this._tryConnect();
   }
