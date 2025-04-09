@@ -1,5 +1,5 @@
 import { UnsubscribeFunc } from "home-assistant-js-websocket";
-import { css, CSSResultGroup, html, nothing, PropertyValues } from "lit";
+import { css, CSSResultGroup, html, LitElement, nothing, PropertyValues } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { GradientPath } from "../gradient-path/gradient-path";
 import { styleMap } from "lit/directives/style-map.js";
@@ -15,7 +15,6 @@ import {
   RenderTemplateResult,
   subscribeRenderTemplate,
 } from "../ha";
-import { TemplateGaugeBaseElement } from "../mushroom/utils/base-element";
 import { CacheManager } from "../mushroom/utils/cache-manager";
 import { TEMPLATE_CARD_EDITOR_NAME, TEMPLATE_CARD_NAME } from "./const";
 import { TemplateCardConfig } from "./template-gauge-card-config";
@@ -52,7 +51,7 @@ type gradienSegment = {
 
 @customElement(TEMPLATE_CARD_NAME)
 export class TemplateCard
-  extends TemplateGaugeBaseElement
+  extends LitElement
   implements LovelaceCard
 {
   @property({ type: Number }) public _prev_min?: number;
@@ -77,6 +76,8 @@ export class TemplateCard
       max: "1",
     };
   }
+
+  @property({ attribute: false }) public hass?: HomeAssistant;
 
   @state() private _config?: TemplateCardConfig;
 
