@@ -24,8 +24,8 @@ import {
 } from "../ha";
 import { CacheManager } from "../mushroom/utils/cache-manager";
 import {
-  TEMPLATE_CARD_EDITOR_NAME,
-  TEMPLATE_CARD_NAME,
+  EDITOR_NAME,
+  CARD_NAME,
   DEFAULT_MIN,
   DEFAULT_MAX,
   DEFAULT_GRADIENT_RESOLUTION,
@@ -34,10 +34,10 @@ import {
   WARNING_COLOR,
   ERROR_COLOR,
   SEVERITY_MAP,
-} from "./const";
-import { TemplateCardConfig } from "./template-gauge-card-config";
+} from "./_const";
+import { GaugeCardProCardConfig } from "./config";
 import { registerCustomCard } from "../mushroom/utils/custom-cards";
-import "./template-gauge";
+import "./gauge";
 
 const templateCache = new CacheManager<TemplateResults>(1000);
 
@@ -46,8 +46,8 @@ type TemplateResults = Partial<
 >;
 
 registerCustomCard({
-  type: TEMPLATE_CARD_NAME,
-  name: "Template Gauge Card",
+  type: CARD_NAME,
+  name: "Gauge Card Pro",
   description: "Build beautiful Gauge cards using templates and gradients",
 });
 
@@ -67,24 +67,22 @@ type gradienSegment = {
   pos: number;
 };
 
-@customElement(TEMPLATE_CARD_NAME)
-export class TemplateCard extends LitElement implements LovelaceCard {
+@customElement(CARD_NAME)
+export class GaugeCardProCard extends LitElement implements LovelaceCard {
   @property({ type: Number }) public _prev_min?: number;
 
   @property({ type: Number }) public _prev_max?: number;
 
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
-    await import("./template-gauge-card-editor");
-    return document.createElement(
-      TEMPLATE_CARD_EDITOR_NAME
-    ) as LovelaceCardEditor;
+    await import("./editor");
+    return document.createElement(EDITOR_NAME) as LovelaceCardEditor;
   }
 
   public static async getStubConfig(
     _hass: HomeAssistant
-  ): Promise<TemplateCardConfig> {
+  ): Promise<GaugeCardProCardConfig> {
     return {
-      type: `custom:${TEMPLATE_CARD_NAME}`,
+      type: `custom:${CARD_NAME}`,
       value: "{{ (range(0, 200) | random) / 100 - 1 }}",
       valueText: "{{ (range(0, 200) | random) }}",
       min: "-1",
@@ -102,7 +100,7 @@ export class TemplateCard extends LitElement implements LovelaceCard {
 
   @property({ attribute: false }) public hass?: HomeAssistant;
 
-  @state() private _config?: TemplateCardConfig;
+  @state() private _config?: GaugeCardProCardConfig;
 
   @state() private _templateResults?: TemplateResults;
 
@@ -118,7 +116,7 @@ export class TemplateCard extends LitElement implements LovelaceCard {
     return 4;
   }
 
-  setConfig(config: TemplateCardConfig): void {
+  setConfig(config: GaugeCardProCardConfig): void {
     TEMPLATE_KEYS.forEach((key) => {
       if (
         this._config?.[key] !== config[key] ||
@@ -305,7 +303,7 @@ export class TemplateCard extends LitElement implements LovelaceCard {
           hasDoubleClick: hasAction(this._config.double_tap_action),
         })}
       >
-        <template-gauge
+        <gauge-card-pro-gauge
           .min=${min}
           .max=${max}
           .value=${value}
@@ -317,7 +315,7 @@ export class TemplateCard extends LitElement implements LovelaceCard {
           .needle=${this._config!.needle}
           .gradient=${this._config!.gradient}
           .levels=${this._config!.needle ? this._severityLevels() : undefined}
-        ></template-gauge>
+        ></gauge-card-pro-gauge>
 
         <div class="name" .title=${name}>${name}</div>
       </ha-card>
@@ -326,7 +324,7 @@ export class TemplateCard extends LitElement implements LovelaceCard {
 
   private _renderGradient(min: number, max: number): void {
     const levelPath = this.renderRoot
-      .querySelector("ha-card > template-gauge")
+      .querySelector("ha-card > gauge-card-pro-gauge")
       ?.shadowRoot?.querySelector("#gradient-path");
     if (!levelPath) {
       return;
@@ -397,7 +395,7 @@ export class TemplateCard extends LitElement implements LovelaceCard {
         strokeWidth: 1,
       });
     } catch (e) {
-      console.error("{{ Template Gauge Card }} Error gradient:", e);
+      console.error("{{ 🌈 Gauge Card Pro 🛠️ }} Error gradient:", e);
     }
   }
 
@@ -527,7 +525,7 @@ export class TemplateCard extends LitElement implements LovelaceCard {
           outline: none;
         }
 
-        template-gauge {
+        gauge-card-pro-gauge {
           width: 100%;
           max-width: 250px;
         }

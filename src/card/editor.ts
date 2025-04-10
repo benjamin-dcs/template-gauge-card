@@ -1,18 +1,21 @@
+import { mdiGestureTap } from "@mdi/js";
 import { LitElement } from "lit";
 import { html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import memoizeOne from "memoize-one";
 import { assert } from "superstruct";
-import { HomeAssistant, LovelaceCardEditor, fireEvent } from "../ha";
+import {
+  HomeAssistant,
+  LovelaceCardConfig,
+  LovelaceCardEditor,
+  fireEvent,
+} from "../ha";
 import setupCustomlocalize from "../localize";
 import { computeActionsFormSchema } from "../mushroom/shared/config/actions-config";
 import { HaFormSchema } from "../mushroom/utils/form/ha-form";
 import { loadHaComponents } from "../mushroom/utils/loader";
-import { TEMPLATE_CARD_EDITOR_NAME } from "./const";
-import {
-  TemplateCardConfig,
-  templateCardConfigStruct,
-} from "./template-gauge-card-config";
+import { EDITOR_NAME } from "./_const";
+import { GaugeCardProCardConfig, guageCardProConfigStruct } from "./config";
 
 export const CUSTOM_LABELS = [
   "entity",
@@ -31,17 +34,34 @@ export const CUSTOM_LABELS = [
   "yellow",
 ];
 
-@customElement(TEMPLATE_CARD_EDITOR_NAME)
-export class TemplateCardEditor
+export interface ConfigChangedEvent {
+  config: LovelaceCardConfig;
+  error?: string;
+  guiModeAvailable?: boolean;
+}
+
+declare global {
+  interface HASSDomEvents {
+    // @ts-ignore
+    "config-changed": ConfigChangedEvent;
+  }
+}
+
+@customElement(EDITOR_NAME)
+export class GaugeCardProEditor
   extends LitElement
   implements LovelaceCardEditor
 {
   @property({ attribute: false }) public hass?: HomeAssistant;
 
-  @state() private _config?: TemplateCardConfig;
+  @state() private _config?: GaugeCardProCardConfig;
 
   private _schema = memoizeOne(
-    (showSeverity: boolean, showGradient: boolean, showGradientResolution: boolean) =>
+    (
+      showSeverity: boolean,
+      showGradient: boolean,
+      showGradientResolution: boolean
+    ) =>
       [
         {
           name: "entity",
@@ -74,10 +94,7 @@ export class TemplateCardEditor
         {
           name: "",
           type: "grid",
-          schema: [
-            { name: "needle", selector: { boolean: {} } },
-            { },
-          ],
+          schema: [{ name: "needle", selector: { boolean: {} } }, {}],
         },
         ...(showGradient
           ? [
@@ -124,17 +141,17 @@ export class TemplateCardEditor
             ]
           : [{}]),
         ...(showGradient
-          ? 
-            [{
-              name: "",
-              type: "grid",
-              schema: [
-                { name: "show_severity", selector: { boolean: {} } },
-                {}
-              ],
-            }]
-          : [{}]
-        ),
+          ? [
+              {
+                name: "",
+                type: "grid",
+                schema: [
+                  { name: "show_severity", selector: { boolean: {} } },
+                  {},
+                ],
+              },
+            ]
+          : [{}]),
 
         ...(showSeverity
           ? ([
@@ -167,8 +184,8 @@ export class TemplateCardEditor
     void loadHaComponents();
   }
 
-  public setConfig(config: TemplateCardConfig): void {
-    assert(config, templateCardConfigStruct);
+  public setConfig(config: GaugeCardProCardConfig): void {
+    assert(config, guageCardProConfigStruct);
     this._config = config;
   }
 
@@ -197,7 +214,7 @@ export class TemplateCardEditor
     if (!this.hass || !this._config) {
       return nothing;
     }
-    console.log('gradient', this._config!.gradient !== undefined);
+    console.log("gradient", this._config!.gradient !== undefined);
     const schema = this._schema(
       this._config!.severity !== undefined,
       this._config?.needle ?? false,

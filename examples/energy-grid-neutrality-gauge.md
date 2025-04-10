@@ -2,9 +2,8 @@
 
 ![image](https://github.com/user-attachments/assets/a2ec069d-fd1f-4437-b755-21e87e43ffc8)
 
-
 ```yaml
-type: custom:template-gauge-card
+type: custom:gauge-card-pro
 name: |-
   {% set consumedFromGrid =
     states('sensor.p1_meter_energy_import_tariff_1_daily') | float
@@ -53,7 +52,7 @@ valueText: |-
     +
     states('sensor.p1_meter_energy_export_tariff_2_daily') | float
   %}
-  {{ (returnedToGrid - consumedFromGrid) | round(1) | replace('.', ',') }} kWh
+  {{ (returnedToGrid - consumedFromGrid) | abs | round(1) | replace('.', ',') }} kWh
 min: "-1"
 max: "1"
 needle: true

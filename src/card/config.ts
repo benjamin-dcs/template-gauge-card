@@ -37,7 +37,7 @@ const gaugeSegmentStruct = object({
 
 export const gradientResolutionStruct = enums(["low", "medium", "high"]);
 
-export type TemplateCardConfig = LovelaceCardConfig & {
+export type GaugeCardProCardConfig = LovelaceCardConfig & {
   entity?: string;
   value: string;
   valueText?: string;
@@ -57,7 +57,7 @@ export type TemplateCardConfig = LovelaceCardConfig & {
   entity_id?: string | string[];
 };
 
-export const templateCardConfigStruct = assign(
+export const guageCardProConfigStruct = assign(
   baseLovelaceCardConfig,
   object({
     entity: optional(string()),

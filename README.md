@@ -1,4 +1,5 @@
-# Template Gauge Card
+# Gauge Card Pro
+
 ### Build beautiful Gauge cards using 🛠️ templates and 🌈 gradients!
 
 ## Description
@@ -14,6 +15,7 @@ This card is based on the default [Gauge card](https://www.home-assistant.io/das
 
 | Name                 | Type               | Default  | Description                                                                                                                                                          | [Templatable](https://www.home-assistant.io/docs/configuration/templating/) |
 | :------------------- | :----------------- | :------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------- |
+| `type`               | string             | `none`   | `custom:gauge-card-pro`                                                                                                                                              |
 | `entity`             | string             | Optional | Entity for template and actions (e.g.: `{{ states(entity) }}`)                                                                                                       |                                                                             |
 | `value`              | string             | Optional | Value for graph                                                                                                                                                      | ✔️ (`number`)                                                               |
 | `valueText`          | string             | Optional | Text for graph                                                                                                                                                       | ✔️                                                                          |
@@ -99,27 +101,27 @@ segmentsTemplate: |-
 
 ### HACS
 
-Template Gauge Card is not yet available in HACS. Soon a request to be accepted will be created. In the meantime, this repo can be added as [`custom repository`](https://www.hacs.xyz/docs/faq/custom_repositories/).
+Gauge Card Pro is not yet available in HACS. Soon a request to be accepted will be created. In the meantime, this repo can be added as [`custom repository`](https://www.hacs.xyz/docs/faq/custom_repositories/).
 
-Use `https://github.com/benjamin-dcs/template-gauge-card` as **Repository** and `Dashboard` as **Type**
+Use `https://github.com/benjamin-dcs/gauge-card-pro` as **Repository** and `Dashboard` as **Type**
 
 ### Manual
 
-1. Download `template-gauge-card.js` file from the [latest release][release-url].
-2. Put `template-gauge-card.js` file into your `config/www` folder.
-3. Add reference to `template-gauge-card.js` in Dashboard. There's two way to do that:
-   - **Using UI:** _Settings_ → _Dashboards_ → _More Options icon_ → _Resources_ → _Add Resource_ → Set _Url_ as `/local/template-gauge-card.js.js` → Set _Resource type_ as `JavaScript Module`.
+1. Download `gauge-card-pro.js` file from the [latest release][release-url].
+2. Put `gauge-card-pro.js` file into your `config/www` folder.
+3. Add reference to `gauge-card-pro.js` in Dashboard. There's two way to do that:
+   - **Using UI:** _Settings_ → _Dashboards_ → _More Options icon_ → _Resources_ → _Add Resource_ → Set _Url_ as `/local/gauge-card-pro.js` → Set _Resource type_ as `JavaScript Module`.
      **Note:** If you do not see the Resources menu, you will need to enable _Advanced Mode_ in your _User Profile_
    - **Using YAML:** Add following code to `lovelace` section.
      ```yaml
      resources:
-       - url: /local/template-gauge-card.js.js
+       - url: /local/gauge-card-pro.js
          type: module
      ```
 
 ### Translations
 
-If you want to help translating Template Gauge Card, feel free to create an [issue](https://github.com/benjamin-dcs/template-gauge-card/issues) or fork this repo and create an pull-request.
+If you want to help translating Template Gauge Card, feel free to create an [issue](https://github.com/benjamin-dcs/gauge-card-pro/issues) or fork this repo and create an pull-request.
 
 ## Support
 

@@ -1,5 +1,6 @@
-export const TEMPLATE_CARD_NAME = "template-gauge-card";
-export const TEMPLATE_CARD_EDITOR_NAME = `${TEMPLATE_CARD_NAME}-editor`;
+export const CARD_NAME = "gauge-card-pro";
+// export const CARD_NAME = "template-gauge-card";
+export const EDITOR_NAME = `${CARD_NAME}-editor`;
 
 export const DEFAULT_MIN = 0;
 export const DEFAULT_MAX = 100;

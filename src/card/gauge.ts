@@ -16,8 +16,8 @@ export interface LevelDefinition {
   stroke: string;
 }
 
-@customElement("template-gauge")
-export class TemplateGauge extends LitElement {
+@customElement("gauge-card-pro-gauge")
+export class GaugeCardProGauge extends LitElement {
   @property({ type: Number }) public min = 0;
 
   @property({ type: Number }) public max = 100;
@@ -212,6 +212,6 @@ export class TemplateGauge extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    "template-gauge": TemplateGauge;
+    "gauge-card-pro-gauge": GaugeCardProGauge;
   }
 }
