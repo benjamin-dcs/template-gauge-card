@@ -15,10 +15,7 @@ import { computeActionsFormSchema } from "../mushroom/shared/config/actions-conf
 import { HaFormSchema } from "../mushroom/utils/form/ha-form";
 import { loadHaComponents } from "../mushroom/utils/loader";
 import { EDITOR_NAME } from "./_const";
-import {
-  GaugeCardProCardConfig,
-  guageCardProConfigStruct,
-} from "./config";
+import { GaugeCardProCardConfig, guageCardProConfigStruct } from "./config";
 
 export const CUSTOM_LABELS = [
   "entity",
