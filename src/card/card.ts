@@ -1,6 +1,14 @@
 import { UnsubscribeFunc } from "home-assistant-js-websocket";
-import { css, CSSResultGroup, html, nothing, PropertyValues } from "lit";
+import {
+  css,
+  CSSResultGroup,
+  html,
+  LitElement,
+  nothing,
+  PropertyValues,
+} from "lit";
 import { customElement, property, state } from "lit/decorators.js";
+import { GradientPath } from "../gradient-path/gradient-path";
 import { styleMap } from "lit/directives/style-map.js";
 import hash from "object-hash/dist/object_hash";
 import {
@@ -14,11 +22,22 @@ import {
   RenderTemplateResult,
   subscribeRenderTemplate,
 } from "../ha";
-import { TemplateGaugeBaseElement } from "../mushroom/utils/base-element";
 import { CacheManager } from "../mushroom/utils/cache-manager";
-import { TEMPLATE_CARD_EDITOR_NAME, TEMPLATE_CARD_NAME } from "./const";
-import { TemplateCardConfig } from "./template-gauge-card-config";
-import "./template-gauge";
+import {
+  EDITOR_NAME,
+  CARD_NAME,
+  DEFAULT_MIN,
+  DEFAULT_MAX,
+  DEFAULT_GRADIENT_RESOLUTION,
+  GRADIENT_RESOLUTION_MAP,
+  INFO_COLOR,
+  WARNING_COLOR,
+  ERROR_COLOR,
+  SEVERITY_MAP,
+} from "./_const";
+import { GaugeCardProCardConfig } from "./config";
+import { registerCustomCard } from "../mushroom/utils/custom-cards";
+import "./gauge";
 
 const templateCache = new CacheManager<TemplateResults>(1000);
 
@@ -26,15 +45,11 @@ type TemplateResults = Partial<
   Record<TemplateKey, RenderTemplateResult | undefined>
 >;
 
-export const DEFAULT_MIN = 0;
-export const DEFAULT_MAX = 100;
-
-export const severityMap = {
-  red: "var(--error-color)",
-  green: "var(--success-color)",
-  yellow: "var(--warning-color)",
-  normal: "var(--info-color)",
-};
+registerCustomCard({
+  type: CARD_NAME,
+  name: "Gauge Card Pro",
+  description: "Build beautiful Gauge cards using templates and gradients",
+});
 
 const TEMPLATE_KEYS = [
   "value",
@@ -47,31 +62,45 @@ const TEMPLATE_KEYS = [
 ] as const;
 type TemplateKey = (typeof TEMPLATE_KEYS)[number];
 
-@customElement(TEMPLATE_CARD_NAME)
-export class TemplateCard
-  extends TemplateGaugeBaseElement
-  implements LovelaceCard
-{
+type gradienSegment = {
+  color: string;
+  pos: number;
+};
+
+@customElement(CARD_NAME)
+export class GaugeCardProCard extends LitElement implements LovelaceCard {
+  @property({ type: Number }) public _prev_min?: number;
+
+  @property({ type: Number }) public _prev_max?: number;
+
   public static async getConfigElement(): Promise<LovelaceCardEditor> {
-    await import("./template-gauge-card-editor");
-    return document.createElement(
-      TEMPLATE_CARD_EDITOR_NAME
-    ) as LovelaceCardEditor;
+    await import("./editor");
+    return document.createElement(EDITOR_NAME) as LovelaceCardEditor;
   }
 
   public static async getStubConfig(
     _hass: HomeAssistant
-  ): Promise<TemplateCardConfig> {
+  ): Promise<GaugeCardProCardConfig> {
     return {
-      type: `custom:${TEMPLATE_CARD_NAME}`,
-      value: "{{ (range(0, 200) | random) / 100 -1 }}",
-      valueText: "{{ (range(0, 200) | random) }} W",
+      type: `custom:${CARD_NAME}`,
+      value: "{{ (range(0, 200) | random) / 100 - 1 }}",
+      valueText: "{{ (range(0, 200) | random) }}",
       min: "-1",
       max: "1",
+      needle: true,
+      segments: [
+        { from: -1, color: "red" },
+        { from: -0.5, color: "yellow" },
+        { from: 0, color: "green" },
+      ],
+      gradient: true,
+      gradientResolution: "medium",
     };
   }
 
-  @state() private _config?: TemplateCardConfig;
+  @property({ attribute: false }) public hass?: HomeAssistant;
+
+  @state() private _config?: GaugeCardProCardConfig;
 
   @state() private _templateResults?: TemplateResults;
 
@@ -87,7 +116,7 @@ export class TemplateCard
     return 4;
   }
 
-  setConfig(config: TemplateCardConfig): void {
+  setConfig(config: GaugeCardProCardConfig): void {
     TEMPLATE_KEYS.forEach((key) => {
       if (
         this._config?.[key] !== config[key] ||
@@ -148,7 +177,7 @@ export class TemplateCard
 
   public isTemplate(key: TemplateKey) {
     const value = this._config?.[key];
-    return value?.includes("{");
+    return String(value)?.includes("{");
   }
 
   private getValue(key: TemplateKey) {
@@ -188,14 +217,14 @@ export class TemplateCard
           return segment.color;
         }
       }
-      return severityMap.normal;
+      return SEVERITY_MAP.normal;
     }
 
     // old format
     const sections = this.getSeverity();
 
     if (!sections) {
-      return severityMap.normal;
+      return SEVERITY_MAP.normal;
     }
 
     const sectionsArray = Object.keys(sections);
@@ -205,22 +234,22 @@ export class TemplateCard
     ]);
 
     for (const severity of sortable) {
-      if (severityMap[severity[0]] == null || isNaN(severity[1])) {
-        return severityMap.normal;
+      if (SEVERITY_MAP[severity[0]] == null || isNaN(severity[1])) {
+        return SEVERITY_MAP.normal;
       }
     }
     sortable.sort((a, b) => a[1] - b[1]);
 
     if (numberValue >= sortable[0][1] && numberValue < sortable[1][1]) {
-      return severityMap[sortable[0][0]];
+      return SEVERITY_MAP[sortable[0][0]];
     }
     if (numberValue >= sortable[1][1] && numberValue < sortable[2][1]) {
-      return severityMap[sortable[1][0]];
+      return SEVERITY_MAP[sortable[1][0]];
     }
     if (numberValue >= sortable[2][1]) {
-      return severityMap[sortable[2][0]];
+      return SEVERITY_MAP[sortable[2][0]];
     }
-    return severityMap.normal;
+    return SEVERITY_MAP.normal;
   }
 
   private _severityLevels() {
@@ -230,7 +259,6 @@ export class TemplateCard
       return segments.map((segment) => ({
         level: segment?.from,
         stroke: segment?.color,
-        label: segment?.label,
       }));
     }
 
@@ -238,13 +266,13 @@ export class TemplateCard
     const sections = this.getSeverity();
 
     if (!sections) {
-      return [{ level: 0, stroke: severityMap.normal }];
+      return [{ level: 0, stroke: SEVERITY_MAP.normal }];
     }
 
     const sectionsArray = Object.keys(sections);
     return sectionsArray.map((severity) => ({
       level: sections[severity],
-      stroke: severityMap[severity],
+      stroke: SEVERITY_MAP[severity],
     }));
   }
 
@@ -275,7 +303,7 @@ export class TemplateCard
           hasDoubleClick: hasAction(this._config.double_tap_action),
         })}
       >
-        <template-gauge
+        <gauge-card-pro-gauge
           .min=${min}
           .max=${max}
           .value=${value}
@@ -285,18 +313,112 @@ export class TemplateCard
             "--gauge-color": this._computeSeverity(value),
           })}
           .needle=${this._config!.needle}
+          .gradient=${this._config!.gradient}
           .levels=${this._config!.needle ? this._severityLevels() : undefined}
-        ></template-gauge>
+        ></gauge-card-pro-gauge>
+
         <div class="name" .title=${name}>${name}</div>
       </ha-card>
     `;
   }
 
-  protected updated(changedProps: PropertyValues): void {
-    super.updated(changedProps);
+  private _renderGradient(min: number, max: number): void {
+    const levelPath = this.renderRoot
+      .querySelector("ha-card > gauge-card-pro-gauge")
+      ?.shadowRoot?.querySelector("#gradient-path");
+    if (!levelPath) {
+      return;
+    }
+
+    const severityLevels = this._severityLevels();
+    let gradientSegments: gradienSegment[] = [];
+    const diff = max - min;
+
+    let firstSegmentCreated = false;
+    for (let i = 0; i < severityLevels.length; i++) {
+      let level = severityLevels[i].level;
+      if (level < min || level > max) {
+        continue;
+      }
+      level += min * -1;
+
+      if (!firstSegmentCreated && level > min) {
+        gradientSegments.push({ color: INFO_COLOR, pos: 0 });
+      }
+
+      const pos = level / diff;
+      let color = severityLevels[i].stroke;
+
+      if (color.includes("var(")) {
+        color = window
+          .getComputedStyle(document.body)
+          .getPropertyValue(color.slice(4, -1));
+      }
+
+      gradientSegments.push({ color: color, pos: pos });
+      firstSegmentCreated = true;
+    }
+
+    // gradient-path expects at least 2 segments
+    if (gradientSegments.length < 2) {
+      gradientSegments = [
+        { color: WARNING_COLOR, pos: 0 },
+        { color: ERROR_COLOR, pos: 1 },
+      ];
+    }
+
+    //gradient-path expects an ordered array
+    gradientSegments = gradientSegments.sort((a, b) => a.pos - b.pos);
+
+    const gradientResolution: string =
+      this._config &&
+      this._config.gradientResolution !== undefined &&
+      Object.keys(GRADIENT_RESOLUTION_MAP).includes(
+        this._config.gradientResolution
+      )
+        ? this._config.gradientResolution
+        : DEFAULT_GRADIENT_RESOLUTION;
+
+    try {
+      const gp = new GradientPath({
+        path: levelPath,
+        segments: GRADIENT_RESOLUTION_MAP[gradientResolution].segments,
+        samples: GRADIENT_RESOLUTION_MAP[gradientResolution].samples,
+        removeChild: false,
+      });
+
+      gp.render({
+        type: "path",
+        fill: gradientSegments,
+        width: 14,
+        stroke: gradientSegments,
+        strokeWidth: 1,
+      });
+    } catch (e) {
+      console.error("{{ 🌈 Gauge Card Pro 🛠️ }} Error gradient:", e);
+    }
+  }
+
+  protected updated(changedProperties: PropertyValues): void {
+    super.updated(changedProperties);
     if (!this._config || !this.hass) {
       return;
     }
+
+    const min = Boolean(this.getValue("min"))
+      ? Number(this.getValue("min"))
+      : DEFAULT_MIN;
+    const max = Boolean(this.getValue("max"))
+      ? Number(this.getValue("max"))
+      : DEFAULT_MAX;
+
+    // if ((min !== this._prev_min || max !== this._prev_max) && this._config.gradient) {
+    if (this._config.gradient) {
+      this._renderGradient(min, max);
+    }
+
+    this._prev_min = min;
+    this._prev_max = max;
 
     this._tryConnect();
   }
@@ -327,7 +449,7 @@ export class TemplateCard
           };
         },
         {
-          template: this._config[key] ?? "",
+          template: String(this._config[key]) ?? "",
           entity_ids: this._config.entity_id,
           variables: {
             config: this._config,
@@ -383,8 +505,6 @@ export class TemplateCard
 
   static get styles(): CSSResultGroup {
     return [
-      // super.styles,
-      // cardStyle,
       css`
         ha-card {
           height: 100%;
@@ -405,7 +525,7 @@ export class TemplateCard
           outline: none;
         }
 
-        template-gauge {
+        gauge-card-pro-gauge {
           width: 100%;
           max-width: 250px;
         }

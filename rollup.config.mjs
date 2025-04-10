@@ -63,7 +63,7 @@ export default [
   {
     input: "src/main.ts",
     output: {
-      file: "dist/template-gauge-card.js",
+      file: "dist/gauge-card-pro.js",
       format: "es",
       inlineDynamicImports: true,
     },
