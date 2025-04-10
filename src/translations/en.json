@@ -2,15 +2,22 @@
   "editor": {
     "card": {
       "entity": "Entity",
-      "value": "Value",
-      "valueText": "Value Text",
-      "min": "Min",
+      "gradient": "Gradient",
+      "gradientResolution": "Gradient resolution",
+      "gradientResolutionOptions": {
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High"
+      },
+      "green": "Green",
       "max": "Max",
+      "min": "Min",
       "needle": "Needle",
       "severity": "Severity",
       "show_severity": "Show severity",
       "red": "Red",
-      "green": "Green",
+      "value": "Value",
+      "valueText": "Value Text",
       "yellow": "Yellow"
     }
   },

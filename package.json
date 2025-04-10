@@ -1,7 +1,7 @@
 {
-  "name": "template-gauge-card",
-  "version": "0.2.0-b1",
-  "description": "Template Gauge Card",
+  "name": "gauge-card-pro",
+  "version": "0.3.0-rc1",
+  "description": "Gauge Card Pro",
   "main": "index.js",
   "scripts": {
     "start": "rollup -c --watch --bundleConfigAsCjs",
@@ -14,7 +14,7 @@
   "author": "Benjamin DCS",
   "repository": {
     "type": "git",
-    "url": "https://github.com/benjamin-dcs/template-gauge-card"
+    "url": "https://github.com/benjamin-dcs/gauge-card-pro"
   },
   "license": "ISC",
   "dependencies": {

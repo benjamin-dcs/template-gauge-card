@@ -25,6 +25,7 @@ export * from "./panels/lovelace/common/handle-actions";
 export * from "./panels/lovelace/common/has-action";
 export * from "./panels/lovelace/common/validate-condition";
 export * from "./panels/lovelace/editor/structs/action-struct";
+export * from "./panels/lovelace/editor/structs/base-card-struct";
 export * from "./panels/lovelace/types";
 export * from "./resources/ha-sortable-styles";
 export * from "./util/calculate";
