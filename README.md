@@ -1,4 +1,12 @@
-# Gauge Card Pro
+> [!CAUTION]
+> ### `Template Gauge Card` is now `Gauge Card Pro`
+> `Template Gauge Card` has been renamed to `Gauge Card Pro` as the card is no longer just about _templates_ and to leave room for future features that are not template related.
+>
+> This release will be the last release under this repository/name. Please use `https://github.com/benjamin-dcs/gauge-card-pro` from now on. This release is already available under the new name. Changing to `Gauge Card Pro` requires a change in your card config from `type: custom:template-gauge-card` to `type: custom:gauge-card-pro`
+>
+> Sorry for the inconvenience! Thanks for using this card ❤️
+
+# Template Gauge Card
 
 ### Build beautiful Gauge cards using 🛠️ templates and 🌈 gradients!
 
